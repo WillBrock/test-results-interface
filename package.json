@@ -23,6 +23,17 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "react-router-dom": "^4.3.1"
+    "apollo-boost": "^0.1.23",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.10.0",
+    "normalize.css": "^8.0.1",
+    "react-apollo": "^2.3.3",
+    "react-apollo-hooks": "^0.2.1",
+    "react-router-dom": "^4.3.1",
+    "react-select": "^2.2.0",
+    "react-table": "^6.8.6",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.84.0",
+    "styled-components": "^4.1.3"
   }
 }

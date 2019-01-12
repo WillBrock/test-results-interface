@@ -1,12 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Runs from './views/Runs';
+import Tests from './views/Tests';
 
 function Routes() {
 	return (
-		<div>
+		<>
 			<Route exact path="/" component={Runs} />
-		</div>
+			<Route path="/tests" component={Tests} />
+		</>
 	);
 }
 
