@@ -7,24 +7,29 @@ const NavContainer = styled.nav`
 	flex-direction : column;
 	overflow       : hidden;
 	height         : 100vh;
-	background     : #474544;
-	box-shadow     : 4px 0 1px -2px grey;
+	/*background     : #474544;*/
+	background : rgb(240, 240, 240);
+	/*box-shadow     : 4px 0 1px -2px grey;*/
+	border-right : 1px solid rgb(62, 134, 193);
 `;
 
 const ListItem = styled.li`
-	border-top : 1px solid #1A1817;
+	/*border-top : 1px solid #1A1817;*/
+	border-bottom : 1px solid rgba(0, 0, 0, 0.1);
 
+	/*
 	:last-child {
 		border-bottom : 1px solid #1A1817;
 	}
+	*/
 `;
 
 const CustomLink = styled(Link)`
 	display : block;
-	padding : 10px 12px 10px 15px;
+	padding : 10px 10px 10px 14px;
 
 	:hover {
-		background : gray;
+		background : rgb(212, 212, 212);
 	}
 `;
 
@@ -33,10 +38,10 @@ function SideNav() {
 		<NavContainer>
 			<ul>
 				<ListItem>
-					<CustomLink to="/" title="Test Runs"><Icon inverted name="plane" size="large" color="grey" /></CustomLink>
+					<CustomLink to="/runs" title="Test Runs"><Icon name="plane" size="large" color="grey" /></CustomLink>
 				</ListItem>
 				<ListItem>
-					<CustomLink to="/tests" title="Specs"><Icon inverted name="folder open" size="large" color="grey" /></CustomLink>
+					<CustomLink to="/tests" title="Specs"><Icon name="folder open" size="large" color="grey" /></CustomLink>
 				</ListItem>
 			</ul>
 		</NavContainer>

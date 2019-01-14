@@ -1,37 +1,24 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import "react-table/react-table.css";
+import { Icon, Button } from 'semantic-ui-react';
+import styled from 'styled-components';
+import 'react-table/react-table.css';
+import '../../styles/react-table.scss';
 
-const default_page_size = 20;
+const CenterCell = styled.span`
+	display    : block;
+	text-align : center;
+`;
 
-const columns = [
-	{
-		Header : `Run`,
-		accessor : `run_key`,
-	},
-	{
-		Header : `Issue Key`,
-		accessor : `issue_key`,
-	},
-	{
-		Header : `Suites`,
-		accessor : `suites`,
-	},
-	{
-		Header : `Passed`,
-		accessor : `passed`,
-	},
-	{
-		Header : `Length`,
-		accessor : `length`,
-	},
-	{
-		Header : `Version`,
-		accessor : `version`,
-	},
-];
+const RightCell = styled.span`
+	display    : block;
+	text-align : right;
+`;
+
+const default_page_size = 15;
 
 const GET_RUNS = gql`
 	query GetRuns($id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
@@ -41,12 +28,61 @@ const GET_RUNS = gql`
 			issue_key,
 			passed,
 			length,
+			start,
 			version,
 		}
 	}
 `;
 
 function RunTable() {
+	const columns = [
+		{
+			Header   : `Run`,
+			accessor : `run_key`,
+		},
+		{
+			Header   : `Issue Key`,
+			accessor : `issue_key`,
+		},
+		{
+			Header   : `Suites`,
+			accessor : `suites`,
+		},
+		{
+			Header   : `Start`,
+			accessor : `start`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
+			Header   : `Duration`,
+			accessor : `length`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
+			Header   : `Version`,
+			accessor : `version`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
+			Header   : `Result`,
+			accessor : `passed`,
+			Cell     : props => {
+				const passed = Number(props.value) === 1;
+				const name   = passed ? `check` : `cancel`;
+				const color  = passed ? `green` : `red`;
+
+				return <CenterCell><Icon name={name} color={color} /></CenterCell>
+			}
+		},
+		{
+			Header     : ``,
+			accessor   : `id`,
+			filterable : false,
+			sortable   : false,
+			Cell       : props => <CenterCell><Link to={`/runs/${props.value}`}><Button positive size="small">View</Button></Link></CenterCell>
+		}
+	];
+
 	const [ pages, setPages ]            = useState(15);
 	const [ table_state, setTableState ] = useState({
 		page_size : default_page_size,
@@ -83,6 +119,7 @@ function RunTable() {
 			pages={pages}
 			onFetchData={fetchData}
 			defaultPageSize={default_page_size}
+			className="-striped"
 			filterable
 		/>
 	)

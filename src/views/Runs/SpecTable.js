@@ -1,0 +1,164 @@
+import React, { useState } from 'react';
+import gql from 'graphql-tag';
+import ReactTable from 'react-table';
+import { useQuery } from 'react-apollo-hooks';
+import { Icon, Button } from 'semantic-ui-react';
+import SpecDetails from './SpecDetails';
+import styled from 'styled-components';
+import 'react-table/react-table.css';
+import '../../styles/react-table.scss';
+
+const CenterCell = styled.span`
+	display    : block;
+	text-align : center;
+`;
+
+const RightCell = styled.span`
+	display    : block;
+	text-align : right;
+`;
+
+const default_page_size = 15;
+
+const GET_SPECS = gql`
+	query GetSpecsFromRun($test_run_id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
+		testRunResults(test_run_id: $test_run_id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
+			id,
+			test_run_id,
+			spec_id,
+			suite_title,
+			retries,
+			passed,
+			failed,
+			skipped,
+			formatted_duration,
+			error_message
+		}
+	}
+`;
+
+function SpecTable({ match, run }) {
+	const columns = [
+		{
+			Header   : `Spec`,
+			accessor : `spec_id`,
+		},
+		{
+			Header   : `Title`,
+			accessor : `suite_title`,
+		},
+		{
+			Header   : `Duration`,
+			accessor : `formatted_duration`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
+			Header   : `Retries`,
+			accessor : `retries`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
+			Header   : `Result`,
+			accessor : `status`,
+			Cell     : props => {
+				const { passed, failed } = props.original;
+				const icon               = getIcon({ passed, failed })
+
+				return <CenterCell>{icon}</CenterCell>
+			}
+		},
+		{
+			Header     : ``,
+			accessor   : `id`,
+			filterable : false,
+			sortable   : false,
+			Cell       : props => <CenterCell><Button onClick={() => handleDetailClick(props.value)} primary size="small">Details</Button></CenterCell>
+		}
+	];
+
+	const [ showModal, setShowModal ]      = useState(false);
+	const [ current_spec, setCurrentSpec ] = useState({});
+	const [ pages, setPages ]              = useState(15);
+	const [ table_state, setTableState ]   = useState({
+		page_size : default_page_size,
+		page      : 0,
+		sorted    : [],
+		filtered  : [],
+	});
+
+	const { data, loading } = useQuery(GET_SPECS, {
+		variables : {
+			test_run_id : run.id,
+			page_size   : table_state.page_size || default_page_size,
+			page        : table_state.page || 0,
+			sorted      : table_state.sorted || [],
+			filtered    : table_state.filtered || [],
+		},
+		suspend : false,
+	});
+
+	function getIcon({ passed, failed }) {
+		let name  = null;
+		let color = null;
+
+		if(passed) {
+			name  = `check`;
+			color = `green`;
+		}
+		else if(failed) {
+			name  = `cancel`;
+			color = `red`;
+		}
+		else {
+			name  = `minus`;
+			color = `yellow`;
+		}
+
+		return <Icon name={name} color={color} />;
+	}
+
+	function fetchData(state) {
+		setTableState({
+			page_size : state.pageSize || default_page_size,
+			page      : state.page || 0,
+			sorted    : state.sorted || [],
+			filtered  : state.filtered || [],
+		});
+	}
+
+	function handleDetailClick(result_id) {
+		setShowModal(true);
+
+		const spec = data.testRunResults.find(result => result.id === result_id);
+		setCurrentSpec(spec);
+	}
+
+	function handleClose() {
+		setShowModal(false);
+	}
+
+	return (
+		<>
+			<SpecDetails
+				open={showModal}
+				handleClose={handleClose}
+				spec={current_spec}
+				getIcon={getIcon}
+			/>
+
+			<ReactTable
+				manual
+				columns={columns}
+				data={data.testRunResults}
+				loading={loading}
+				pages={pages}
+				onFetchData={fetchData}
+				defaultPageSize={default_page_size}
+				className="-striped"
+				filterable
+			/>
+		</>
+	);
+}
+
+export default SpecTable;

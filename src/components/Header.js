@@ -5,9 +5,8 @@ const HeaderContainer = styled.div`
 	display: flex;
 	justify-content : space-between;
 	padding : 0 10px;
-	height : 40px;
-	background : #474544;
-	box-shadow : 0 8px 6px -6px gray;
+	height : 45px;
+	background : rgb(59, 146, 222);
 `;
 
 const Title = styled.div`
@@ -15,7 +14,7 @@ const Title = styled.div`
 	flex-direction : column;
 	justify-content : center;
 	color : #fff;
-	font-weigth : 700;
+	font-weight : 700;
 	font-size : 16px;
 `;
 

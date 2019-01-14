@@ -15,15 +15,15 @@ const FlexContainer = styled.div`
 function App() {
 	return (
 		<Router>
-			<Suspense fallback={<div>Loading...</div>}>
-				<div>
-					<Header />
-					<FlexContainer>
-						<SideNav />
-						<Routes />
-					</FlexContainer>
-				</div>
-			</Suspense>
+			<div>
+				<Header />
+				<FlexContainer>
+					<SideNav />
+						<Suspense fallback={<div>Loading...</div>}>
+							<Routes />
+						</Suspense>
+				</FlexContainer>
+			</div>
 		</Router>
 	);
 }
