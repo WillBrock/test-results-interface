@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import { Icon, Button } from 'semantic-ui-react';
+import { Icon, Button, Checkbox } from 'semantic-ui-react';
 import styled from 'styled-components';
+import formatDuration from '../../helpers/duration';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
 
@@ -18,11 +20,19 @@ const RightCell = styled.span`
 	text-align : right;
 `;
 
+const LeftHeaderCell = styled.span`
+	text-align : left;
+`;
+
+const RightHeaderCell = styled.span`
+	float : right;
+`;
+
 const default_page_size = 15;
 
 const GET_RUNS = gql`
-	query GetRuns($id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
-		testRuns(id: $id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
+	query GetRuns($id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered], $exclude_setup: Boolean) {
+		testRuns(id: $id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered, exclude_setup: $exclude_setup) {
 			id,
 			run_key,
 			issue_key,
@@ -30,15 +40,43 @@ const GET_RUNS = gql`
 			length,
 			start,
 			version,
+			suites
 		}
 	}
 `;
 
 function RunTable() {
+	const [ exclude_setup, setExcludeSetup ] = useState(true);
+	const [ pages, setPages ]                = useState(15);
+	const [ table_state, setTableState ]     = useState({
+		page_size : default_page_size,
+		page      : 0,
+		sorted    : [],
+		filtered  : [],
+	});
+
+	const { data, loading } = useQuery(GET_RUNS, {
+		variables : {
+			page_size : table_state.page_size || default_page_size,
+			page      : table_state.page || 0,
+			sorted    : table_state.sorted || [],
+			filtered  : table_state.filtered || [],
+			exclude_setup,
+		},
+		suspend : false,
+	});
+
 	const columns = [
 		{
-			Header   : `Run`,
+			Header   : () => (
+				<>
+					<LeftHeaderCell>Runs</LeftHeaderCell>
+					<RightHeaderCell><Checkbox label="Exclude setup" checked={exclude_setup} onChange={() => setExcludeSetup(!exclude_setup)} /></RightHeaderCell>
+				</>
+			),
 			accessor : `run_key`,
+			minWidth : 200,
+			sortable : false,
 		},
 		{
 			Header   : `Issue Key`,
@@ -47,16 +85,17 @@ function RunTable() {
 		{
 			Header   : `Suites`,
 			accessor : `suites`,
+			minWidth : 250,
 		},
 		{
 			Header   : `Start`,
 			accessor : `start`,
-			Cell     : props => <RightCell>{props.value}</RightCell>
+			Cell     : props => <RightCell>{moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)}</RightCell>
 		},
 		{
 			Header   : `Duration`,
 			accessor : `length`,
-			Cell     : props => <RightCell>{props.value}</RightCell>
+			Cell     : props => <RightCell>{props.value ? formatDuration(props.value) : `In progress`}</RightCell>
 		},
 		{
 			Header   : `Version`,
@@ -83,29 +122,11 @@ function RunTable() {
 		}
 	];
 
-	const [ pages, setPages ]            = useState(15);
-	const [ table_state, setTableState ] = useState({
-		page_size : default_page_size,
-		page      : 0,
-		sorted    : [],
-		filtered  : [],
-	});
-
-	const { data, loading } = useQuery(GET_RUNS, {
-		variables : {
-			page_size : table_state.page_size || default_page_size,
-			page      : table_state.page || 0,
-			sorted    : table_state.sorted || [],
-			filtered  : table_state.filtered || [],
-		},
-		suspend : false,
-	});
-
 	function fetchData(state) {
 		setTableState({
 			page_size : state.pageSize || default_page_size,
 			page      : state.page || 0,
-			sorted    : state.sorted || [],
+			sorted    : state.sorted.length ? state.sorted : [{ id : `id`, desc : true }],
 			filtered  : state.filtered || [],
 		});
 	}

@@ -2,11 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 const HeaderContainer = styled.div`
+	position : fixed;
 	display: flex;
 	justify-content : space-between;
 	padding : 0 10px;
 	height : 45px;
+	width : 100%;
 	background : rgb(59, 146, 222);
+	z-index : 1000;
 `;
 
 const Title = styled.div`

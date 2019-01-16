@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { useQuery } from 'react-apollo-hooks';
 import { Modal, Tab } from 'semantic-ui-react';
+import formatDuration from '../../helpers/duration';
 import FlexBox from '../../components/FlexBox';
 import Overview from './Overview';
 import History from './History';
@@ -11,18 +12,47 @@ const CustomFlexBox = styled(FlexBox)`
 	justify-content : space-around;
 `;
 
-/*
-const GET_SPEC_DATA = gql`
-
+const FlexGrow = styled.div`
+	min-width : 200px;
 `;
-*/
+
+const Duration = styled(FlexGrow)`
+	text-align : right;
+`;
+
+const GET_SPEC_DATA = gql`
+	query getSpecResults($spec_id: String, $limit: Int, $sorted: [Sorted]) {
+		specResults(spec_id: $spec_id, limit: $limit, sorted: $sorted) {
+			id,
+			spec_id,
+			test_run_id,
+			suite_title,
+			passed,
+			failed,
+			skipped,
+			duration,
+			formatted_duration,
+			number_sql_queries,
+			retries,
+			run_date,
+			error_message,
+		}
+	}
+`;
 
 function SpecDetails({ open, handleClose, spec, getIcon }) {
-	/*
-	const { data } = useQuery(GET_SPEC_DATA, {
-		variables : {},
+	const results = useQuery(GET_SPEC_DATA, {
+		variables : {
+			spec_id : spec.spec_id,
+			limit   : 50,
+			sorted  : [{
+				id : `id`,
+				desc : true,
+			}]
+		},
 	});
-	*/
+
+	const specs = results.data.specResults;
 
 	const panes = [
 		{
@@ -39,7 +69,7 @@ function SpecDetails({ open, handleClose, spec, getIcon }) {
 		},
 		{
 			menuItem : `History`,
-			render   : () => <Tab.Pane attached={false}><History /></Tab.Pane>
+			render   : () => <Tab.Pane attached={false}><History specs={specs} getIcon={getIcon} /></Tab.Pane>
 		}
 	];
 
@@ -52,15 +82,15 @@ function SpecDetails({ open, handleClose, spec, getIcon }) {
 		>
 			<Modal.Header>
 				<CustomFlexBox>
-					<div>
+					<FlexGrow>
 						{getIcon({ passed : spec.passed, failed : spec.failed })} {spec.spec_id}
-					</div>
+					</FlexGrow>
 					<div>
 						{spec.suite_title}
 					</div>
-					<div>
-						Duration: {spec.formatted_duration} seconds
-					</div>
+					<Duration>
+						Duration: {spec.duration ? formatDuration(Number(spec.duration) * .001) : ``}
+					</Duration>
 				</CustomFlexBox>
 			</Modal.Header>
 

@@ -4,24 +4,17 @@ import { Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const NavContainer = styled.nav`
+	position       : fixed;
 	flex-direction : column;
 	overflow       : hidden;
 	height         : 100vh;
-	/*background     : #474544;*/
-	background : rgb(240, 240, 240);
-	/*box-shadow     : 4px 0 1px -2px grey;*/
-	border-right : 1px solid rgb(62, 134, 193);
+	margin-top     : 45px;
+	background     : rgb(240, 240, 240);
+	border-right   : 1px solid rgb(62, 134, 193);
 `;
 
 const ListItem = styled.li`
-	/*border-top : 1px solid #1A1817;*/
 	border-bottom : 1px solid rgba(0, 0, 0, 0.1);
-
-	/*
-	:last-child {
-		border-bottom : 1px solid #1A1817;
-	}
-	*/
 `;
 
 const CustomLink = styled(Link)`

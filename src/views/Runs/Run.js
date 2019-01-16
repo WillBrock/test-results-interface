@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import gql from 'graphql-tag';
 import { useQuery } from 'react-apollo-hooks';
-import PageContainer from '../../components/PageContainer';
 import RunSegment from './RunSegment';
 import SpecTable from './SpecTable';
 
@@ -27,12 +26,12 @@ function Run({ match }) {
 	}, [data]);
 
 	return (
-		<PageContainer>
+		<>
 			<RunSegment run={run} />
 			<SpecTable
 				run={run}
 			/>
-		</PageContainer>
+		</>
 	)
 }
 

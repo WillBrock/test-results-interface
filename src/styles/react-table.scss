@@ -1,5 +1,32 @@
+$border : rgba(34,36,38,.1);
+
 .ReactTable {
 	.rt-thead .rt-th {
+		background : #f9fafb;
+		padding : 10px 7px;
 		font-weight : 700;
+		text-align  : left;
+		border-bottom: 1px solid $border;
+		border-right: 1px solid $border;
+	}
+
+	.rt-thead.-filters .rt-th {
+		border-right: 1px solid $border;
+	}
+
+	.rt-tbody {
+		.rt-tr-group {
+			border-bottom : 1px solid $border;
+		}
+
+		.rt-tr .-odd {
+			background : rgba(0,0,50,.02);
+		}
+
+		.rt-td {
+			margin      : auto;
+			border-left : 1px solid $border;
+			padding     : 5px 3px;
+		}
 	}
 }

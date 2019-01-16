@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import { Icon, Button } from 'semantic-ui-react';
+import { Icon, Button, Popup, Message } from 'semantic-ui-react';
 import SpecDetails from './SpecDetails';
+import formatDuration from '../../helpers/duration';
 import styled from 'styled-components';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
@@ -31,7 +32,7 @@ const GET_SPECS = gql`
 			passed,
 			failed,
 			skipped,
-			formatted_duration,
+			duration,
 			error_message
 		}
 	}
@@ -46,11 +47,12 @@ function SpecTable({ match, run }) {
 		{
 			Header   : `Title`,
 			accessor : `suite_title`,
+			minWidth : 400,
 		},
 		{
 			Header   : `Duration`,
-			accessor : `formatted_duration`,
-			Cell     : props => <RightCell>{props.value}</RightCell>
+			accessor : `duration`,
+			Cell     : props => <RightCell>{props.value ? formatDuration(Number(props.value) * .001) : ``}</RightCell>
 		},
 		{
 			Header   : `Retries`,
@@ -61,8 +63,12 @@ function SpecTable({ match, run }) {
 			Header   : `Result`,
 			accessor : `status`,
 			Cell     : props => {
-				const { passed, failed } = props.original;
-				const icon               = getIcon({ passed, failed })
+				const { passed, failed, error_message } = props.original;
+				const icon = getIcon({ passed, failed })
+
+				if(failed) {
+					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<Message negative>{error_message}</Message>} />
+				}
 
 				return <CenterCell>{icon}</CenterCell>
 			}
@@ -121,7 +127,7 @@ function SpecTable({ match, run }) {
 		setTableState({
 			page_size : state.pageSize || default_page_size,
 			page      : state.page || 0,
-			sorted    : state.sorted || [],
+			sorted    : state.sorted.length ? state.sorted : [{ id : `failed`, desc : true }, { id : `passed`, desc : true }],
 			filtered  : state.filtered || [],
 		});
 	}
