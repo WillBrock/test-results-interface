@@ -7,9 +7,11 @@ import SpecTable from './SpecTable';
 const GET_RUN = gql`
 	query getRun($id: Int) {
 		testRuns(id: $id) {
-			id,
-			run_key,
-			issue_key
+			data {
+				id,
+				run_key,
+				issue_key
+			}
 		}
 	}
 `;
@@ -22,7 +24,7 @@ function Run({ match }) {
 	});
 
 	useEffect(() => {
-		setRun(data.testRuns[0]);
+		setRun(data.testRuns.data[0]);
 	}, [data]);
 
 	return (

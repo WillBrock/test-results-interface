@@ -24,16 +24,19 @@ const default_page_size = 15;
 const GET_SPECS = gql`
 	query GetSpecsFromRun($test_run_id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
 		testRunResults(test_run_id: $test_run_id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
-			id,
-			test_run_id,
-			spec_id,
-			suite_title,
-			retries,
-			passed,
-			failed,
-			skipped,
-			duration,
-			error_message
+			count,
+			data {
+				id,
+				test_run_id,
+				spec_id,
+				suite_title,
+				retries,
+				passed,
+				failed,
+				skipped,
+				duration,
+				error_message
+			}
 		}
 	}
 `;
@@ -84,7 +87,6 @@ function SpecTable({ match, run }) {
 
 	const [ showModal, setShowModal ]      = useState(false);
 	const [ current_spec, setCurrentSpec ] = useState({});
-	const [ pages, setPages ]              = useState(15);
 	const [ table_state, setTableState ]   = useState({
 		page_size : default_page_size,
 		page      : 0,
@@ -97,7 +99,7 @@ function SpecTable({ match, run }) {
 			test_run_id : run.id,
 			page_size   : table_state.page_size || default_page_size,
 			page        : table_state.page || 0,
-			sorted      : table_state.sorted || [],
+			sorted      : table_state.sorted.length ? table_state.sorted : [{ id : `id`, desc : true }],
 			filtered    : table_state.filtered || [],
 		},
 		suspend : false,
@@ -135,7 +137,7 @@ function SpecTable({ match, run }) {
 	function handleDetailClick(result_id) {
 		setShowModal(true);
 
-		const spec = data.testRunResults.find(result => result.id === result_id);
+		const spec = data.testRunResults.data.find(result => result.id === result_id);
 		setCurrentSpec(spec);
 	}
 
@@ -152,17 +154,31 @@ function SpecTable({ match, run }) {
 				getIcon={getIcon}
 			/>
 
-			<ReactTable
-				manual
-				columns={columns}
-				data={data.testRunResults}
-				loading={loading}
-				pages={pages}
-				onFetchData={fetchData}
-				defaultPageSize={default_page_size}
-				className="-striped"
-				filterable
-			/>
+			{!loading ? (
+				<ReactTable
+					manual
+					filterable
+					loading={loading}
+					columns={columns}
+					data={data.testRunResults.data}
+					pages={Math.ceil(data.testRunResults.count / default_page_size)}
+					onFetchData={fetchData}
+					defaultPageSize={default_page_size}
+					className="-striped"
+					showPageSizeOptions={false}
+				/>
+			) : (
+				<ReactTable
+					manual
+					filterable
+					loading={loading}
+					columns={columns}
+					data={[]}
+					defaultPageSize={default_page_size}
+					className="-striped"
+					showPageSizeOptions={false}
+				/>
+			)}
 		</>
 	);
 }

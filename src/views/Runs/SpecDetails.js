@@ -31,7 +31,6 @@ const GET_SPEC_DATA = gql`
 			failed,
 			skipped,
 			duration,
-			formatted_duration,
 			number_sql_queries,
 			retries,
 			run_date,

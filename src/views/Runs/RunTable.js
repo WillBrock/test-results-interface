@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
@@ -33,21 +33,23 @@ const default_page_size = 15;
 const GET_RUNS = gql`
 	query GetRuns($id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered], $exclude_setup: Boolean) {
 		testRuns(id: $id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered, exclude_setup: $exclude_setup) {
-			id,
-			run_key,
-			issue_key,
-			passed,
-			length,
-			start,
-			version,
-			suites
+			count,
+			data {
+				id,
+				run_key,
+				issue_key,
+				passed,
+				length,
+				start,
+				version,
+				suites
+			}
 		}
 	}
 `;
 
 function RunTable() {
 	const [ exclude_setup, setExcludeSetup ] = useState(true);
-	const [ pages, setPages ]                = useState(15);
 	const [ table_state, setTableState ]     = useState({
 		page_size : default_page_size,
 		page      : 0,
@@ -57,9 +59,9 @@ function RunTable() {
 
 	const { data, loading } = useQuery(GET_RUNS, {
 		variables : {
-			page_size : table_state.page_size || default_page_size,
+			page_size : default_page_size,
 			page      : table_state.page || 0,
-			sorted    : table_state.sorted || [],
+			sorted    : table_state.sorted.length ? table_state.sorted : [{ id : `id`, desc : true }],
 			filtered  : table_state.filtered || [],
 			exclude_setup,
 		},
@@ -79,6 +81,11 @@ function RunTable() {
 			sortable : false,
 		},
 		{
+			Header   : `Start`,
+			accessor : `start`,
+			Cell     : props => moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)
+		},
+		{
 			Header   : `Issue Key`,
 			accessor : `issue_key`,
 		},
@@ -86,15 +93,12 @@ function RunTable() {
 			Header   : `Suites`,
 			accessor : `suites`,
 			minWidth : 250,
-		},
-		{
-			Header   : `Start`,
-			accessor : `start`,
-			Cell     : props => <RightCell>{moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)}</RightCell>
+			Cell     : props => props.value.replace(/,/g, `, `),
 		},
 		{
 			Header   : `Duration`,
 			accessor : `length`,
+			sortable : false,
 			Cell     : props => <RightCell>{props.value ? formatDuration(props.value) : `In progress`}</RightCell>
 		},
 		{
@@ -124,7 +128,7 @@ function RunTable() {
 
 	function fetchData(state) {
 		setTableState({
-			page_size : state.pageSize || default_page_size,
+			page_size : default_page_size,
 			page      : state.page || 0,
 			sorted    : state.sorted.length ? state.sorted : [{ id : `id`, desc : true }],
 			filtered  : state.filtered || [],
@@ -132,17 +136,33 @@ function RunTable() {
 	}
 
 	return (
-		<ReactTable
-			manual
-			columns={columns}
-			data={data.testRuns}
-			loading={loading}
-			pages={pages}
-			onFetchData={fetchData}
-			defaultPageSize={default_page_size}
-			className="-striped"
-			filterable
-		/>
+		<>
+			{!loading ? (
+				<ReactTable
+					manual
+					filterable
+					loading={loading}
+					columns={columns}
+					data={data.testRuns.data}
+					pages={Math.ceil(data.testRuns.count / default_page_size)}
+					onFetchData={fetchData}
+					defaultPageSize={default_page_size}
+					className="-striped"
+					showPageSizeOptions={false}
+				/>
+			) : (
+				<ReactTable
+					manual
+					filterable
+					loading={loading}
+					columns={columns}
+					data={[]}
+					defaultPageSize={default_page_size}
+					className="-striped"
+					showPageSizeOptions={false}
+				/>
+			)}
+		</>
 	)
 }
 
