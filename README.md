@@ -1,3 +1,3 @@
-# Test Results Reporter
+# Test Results Interface
 
-Reporter to display historical and current automated test results
+Interface to display historical and current automated test results
