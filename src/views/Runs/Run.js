@@ -10,7 +10,8 @@ const GET_RUN = gql`
 			data {
 				id,
 				run_key,
-				issue_key
+				issue_key,
+				suites,
 			}
 		}
 	}

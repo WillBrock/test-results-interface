@@ -21,20 +21,22 @@ const Duration = styled(FlexGrow)`
 `;
 
 const GET_SPEC_DATA = gql`
-	query getSpecResults($spec_id: String, $limit: Int, $sorted: [Sorted]) {
-		specResults(spec_id: $spec_id, limit: $limit, sorted: $sorted) {
-			id,
-			spec_id,
-			test_run_id,
-			suite_title,
-			passed,
-			failed,
-			skipped,
-			duration,
-			number_sql_queries,
-			retries,
-			run_date,
-			error_message,
+	query getSpecResults($spec_id: String, $page_size: Int, $page: Int, $sorted: [Sorted]) {
+		specResults(spec_id: $spec_id, page_size: $page_size, page: $page, sorted: $sorted) {
+			data {
+				id,
+				spec_id,
+				test_run_id,
+				suite_title,
+				passed,
+				failed,
+				skipped,
+				duration,
+				number_sql_queries,
+				retries,
+				run_date,
+				error_message,
+			}
 		}
 	}
 `;
@@ -42,9 +44,9 @@ const GET_SPEC_DATA = gql`
 function SpecDetails({ open, handleClose, spec, getIcon }) {
 	const results = useQuery(GET_SPEC_DATA, {
 		variables : {
-			spec_id : spec.spec_id,
-			limit   : 50,
-			sorted  : [{
+			spec_id   : spec.spec_id,
+			page_size : 50,
+			sorted    : [{
 				id : `id`,
 				desc : true,
 			}]

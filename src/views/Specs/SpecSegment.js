@@ -7,22 +7,19 @@ const CustomFlexBox = styled(FlexBox)`
 	justify-content : space-around;
 `;
 
-function RunSegment({ run }) {
+function SpecSegment({ spec }) {
 	return (
 		<Segment>
 			<CustomFlexBox>
 				<div>
-					{run.run_key}
+					{spec.spec_id}
 				</div>
 				<div>
-					{run.issue_key}
-				</div>
-				<div>
-					{run.suites ? run.suites.replace(/,/g, `, `) : ``}
+					{spec.suite_title}
 				</div>
 			</CustomFlexBox>
 		</Segment>
 	);
 }
 
-export default RunSegment;
+export default SpecSegment;

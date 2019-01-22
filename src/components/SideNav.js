@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -17,7 +17,7 @@ const ListItem = styled.li`
 	border-bottom : 1px solid rgba(0, 0, 0, 0.1);
 `;
 
-const CustomLink = styled(Link)`
+const CustomLink = styled(NavLink)`
 	display : block;
 	padding : 10px 10px 10px 14px;
 
@@ -26,15 +26,19 @@ const CustomLink = styled(Link)`
 	}
 `;
 
+const active_style = {
+	borderLeft : "3px solid rgb(59,146,222)",
+};
+
 function SideNav() {
 	return (
 		<NavContainer>
 			<ul>
 				<ListItem>
-					<CustomLink to="/runs" title="Test Runs"><Icon name="plane" size="large" color="grey" /></CustomLink>
+					<CustomLink exact to="/" title="Test Runs" activeStyle={active_style}><Icon name="plane" size="large" color="grey" /></CustomLink>
 				</ListItem>
 				<ListItem>
-					<CustomLink to="/tests" title="Specs"><Icon name="folder open" size="large" color="grey" /></CustomLink>
+					<CustomLink to="/specs" title="Specs" activeStyle={active_style}><Icon name="folder open" size="large" color="grey" /></CustomLink>
 				</ListItem>
 			</ul>
 		</NavContainer>
