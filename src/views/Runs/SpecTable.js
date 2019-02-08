@@ -35,7 +35,9 @@ const GET_SPECS = gql`
 				failed,
 				skipped,
 				duration,
-				error_message
+				error_message,
+				stacktrace,
+				queries,
 			}
 		}
 	}
@@ -63,14 +65,25 @@ function SpecTable({ match, run }) {
 			Cell     : props => <RightCell>{props.value}</RightCell>
 		},
 		{
+			Header   : `Queries`,
+			accessor : `queries`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
 			Header   : `Result`,
 			accessor : `status`,
 			Cell     : props => {
-				const { passed, failed, error_message } = props.original;
-				const icon = getIcon({ passed, failed })
+				const {
+					passed,
+					failed,
+					error_message,
+					stacktrace
+				} = props.original;
+
+				const icon = getIcon({ passed, failed });
 
 				if(failed) {
-					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<Message negative>{error_message}</Message>} />
+					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<><Message negative>{error_message}</Message><Message negative>{stacktrace}</Message></>} />
 				}
 
 				return <CenterCell>{icon}</CenterCell>
@@ -99,8 +112,8 @@ function SpecTable({ match, run }) {
 			test_run_id : run.id,
 			page_size   : table_state.page_size || default_page_size,
 			page        : table_state.page || 0,
-			sorted      : table_state.sorted.length ? table_state.sorted : [{ id : `id`, desc : true }],
-			filtered    : table_state.filtered || [],
+			sorted      : table_state.sorted.length ? table_state.sorted : [{ id : `failed`, desc : true }, { id : `passed`, desc : true }],
+			filtered    : table_state.filtered.length ? table_state.filtered : [],
 		},
 		suspend : false,
 	});
@@ -130,7 +143,7 @@ function SpecTable({ match, run }) {
 			page_size : state.pageSize || default_page_size,
 			page      : state.page || 0,
 			sorted    : state.sorted.length ? state.sorted : [{ id : `failed`, desc : true }, { id : `passed`, desc : true }],
-			filtered  : state.filtered || [],
+			filtered  : state.filtered.length ? state.filtered : [],
 		});
 	}
 

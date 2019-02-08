@@ -51,18 +51,17 @@ const GET_RUNS = gql`
 function RunTable() {
 	const [ exclude_setup, setExcludeSetup ] = useState(true);
 	const [ table_state, setTableState ]     = useState({
-		page_size : default_page_size,
-		page      : 0,
-		sorted    : [],
-		filtered  : [],
+		page     : 0,
+		sorted   : [{ id : `id`, desc : true }],
+		filtered : [],
 	});
 
 	const { data, loading } = useQuery(GET_RUNS, {
 		variables : {
 			page_size : default_page_size,
-			page      : table_state.page || 0,
+			page      : table_state.page,
 			sorted    : table_state.sorted.length ? table_state.sorted : [{ id : `id`, desc : true }],
-			filtered  : table_state.filtered || [],
+			filtered  : table_state.filtered,
 			exclude_setup,
 		},
 		suspend : false,
@@ -128,10 +127,9 @@ function RunTable() {
 
 	function fetchData(state) {
 		setTableState({
-			page_size : default_page_size,
-			page      : state.page || 0,
-			sorted    : state.sorted.length ? state.sorted : [{ id : `id`, desc : true }],
-			filtered  : state.filtered || [],
+			page     : state.page,
+			sorted   : state.sorted,
+			filtered : state.filtered,
 		});
 	}
 

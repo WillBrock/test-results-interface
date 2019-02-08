@@ -32,10 +32,11 @@ const GET_SPEC_DATA = gql`
 				failed,
 				skipped,
 				duration,
-				number_sql_queries,
+				queries,
 				retries,
 				run_date,
 				error_message,
+				stacktrace,
 			}
 		}
 	}
@@ -53,7 +54,7 @@ function SpecDetails({ open, handleClose, spec, getIcon }) {
 		},
 	});
 
-	const specs = results.data.specResults;
+	const specs = results.data.specResults.data;
 
 	const panes = [
 		{

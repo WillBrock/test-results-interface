@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import { Button, Popup, Message } from 'semantic-ui-react';
+import { Popup, Message } from 'semantic-ui-react';
 import formatDuration from '../../helpers/duration';
 import styled from 'styled-components';
 import PassFailIcon from '../../components/PassFailIcon';
@@ -33,6 +34,7 @@ const GET_SPECS = gql`
 				run_date,
 				issue_key,
 				error_message,
+				queries,
 			}
 		}
 	}
@@ -42,7 +44,7 @@ function SpecHistoryTable({ spec }) {
 	const default_page_size = 15;
 	const [ table_state, setTableState ] = useState({
 		page     : 0,
-		sorted   : [{ id : `spec_id`, desc : true }],
+		sorted   : [{ id : `id`, desc : true }],
 		filtered : [],
 	});
 
@@ -60,6 +62,11 @@ function SpecHistoryTable({ spec }) {
 		{
 			Header   : `Date`,
 			accessor : `run_date`,
+			Cell     : props => moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)
+		},
+		{
+			Header  : `Run`,
+			accessor : `run_key`,
 		},
 		{
 			Header  : `Issue Key`,
@@ -76,6 +83,11 @@ function SpecHistoryTable({ spec }) {
 			Cell     : props => <RightCell>{props.value}</RightCell>
 		},
 		{
+			Header   : `Queries`,
+			accessor : `queries`,
+			Cell     : props => <RightCell>{props.value}</RightCell>
+		},
+		{
 			Header   : `Result`,
 			accessor : `status`,
 			Cell     : props => {
@@ -89,14 +101,6 @@ function SpecHistoryTable({ spec }) {
 				return <CenterCell>{icon}</CenterCell>
 			}
 		},
-		{
-			Header     : ``,
-			accessor   : `id`,
-			filterable : false,
-			sortable   : false,
-			//Cell       : props => <CenterCell><Button onClick={() => handleDetailClick(props.value)} primary size="small">Details</Button></CenterCell>
-			Cell       : props => <CenterCell><Button primary size="small">Details</Button></CenterCell>
-		}
 	];
 
 	function onFetchData(state) {

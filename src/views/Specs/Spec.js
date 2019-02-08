@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import gql from 'graphql-tag';
 import { useQuery } from 'react-apollo-hooks';
+import { Tab } from 'semantic-ui-react';
 import SpecSegment from './SpecSegment';
 import SpecHistoryTable from './SpecHistoryTable';
-
-// Tabs - History, charts
-
-// Charts - queries ran, duration, pass/fail scatter plot, retry scatter plot
+import Charts from './Charts';
 
 const GET_SPEC = gql`
 	query getSingleSpec($spec_id: String) {
@@ -31,12 +29,29 @@ function Run({ match }) {
 		return `Loading...`
 	}
 
+	const panes = [
+		{
+			menuItem : `History`,
+			render   : () => (
+				<Tab.Pane attached={false}>
+					<SpecHistoryTable spec={data.specResults.data[0]} />
+				</Tab.Pane>
+			)
+		},
+		{
+			menuItem : `Charts`,
+			render   : () => (
+				<Tab.Pane attached={false}>
+					<Charts />
+				</Tab.Pane>
+			)
+		}
+	];
+
 	return (
 		<>
 			<SpecSegment spec={data.specResults.data[0]} />
-			<SpecHistoryTable
-				spec={data.specResults.data[0]}
-			/>
+			<Tab menu={{ secondary : true, pointing : true }} panes={panes} />
 		</>
 	)
 }

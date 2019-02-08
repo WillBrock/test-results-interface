@@ -5,9 +5,15 @@ function Overview({ spec }) {
 	return (
 		<div>
 			{spec.failed ? (
-				<Message negative>
-					{spec.error_message}
-				</Message>
+				<>
+					<Message negative>
+						{spec.error_message}
+					</Message>
+
+					<Message negative>
+						{spec.stacktrace}
+					</Message>
+				</>
 			) : (
 				<Message positive>
 					Spec Passed!

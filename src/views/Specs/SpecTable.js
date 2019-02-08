@@ -76,6 +76,13 @@ function SpecTable() {
 			accessor : `retries`,
 			Cell     : (props) => <RightCell>{props.value}</RightCell>
 		},
+		/*
+		{
+			Header   : `Query Pct Change`,
+			accessor : `query_percent_change`,
+			Cell     : (props) => <RightCell>{props.value}</RightCell>
+		},
+		*/
 		{
 			Header     : ``,
 			accessor   : `spec_id`,

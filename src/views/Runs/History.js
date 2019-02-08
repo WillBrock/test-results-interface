@@ -10,10 +10,10 @@ function History({ specs, getIcon }) {
 			<Table.Cell>{moment(spec.run_date).format(`MM/DD/YYYY HH:mm:ss`)}</Table.Cell>
 			<Table.Cell>{spec.duration ? formatDuration(Number(spec.duration) * .001) : ``}</Table.Cell>
 			<Table.Cell>{spec.retries}</Table.Cell>
-			<Table.Cell>{spec.number_sql_queries}</Table.Cell>
+			<Table.Cell>{spec.queries}</Table.Cell>
 			<Table.Cell>
 				{spec.failed ? (
-					<Popup basic trigger={<Icon name="info circle" color="red"></Icon>} content={<Message negative>{spec.error_message}</Message>} />
+					<Popup basic trigger={<Icon name="info circle" color="red"></Icon>} content={<><Message negative>{spec.error_message}</Message><Message negative>{spec.stacktrace}</Message></>} />
 				) : (
 					``
 				)}
