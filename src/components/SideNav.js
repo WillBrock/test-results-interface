@@ -35,7 +35,7 @@ function SideNav() {
 		<NavContainer>
 			<ul>
 				<ListItem>
-					<CustomLink exact to="/" title="Test Runs" activeStyle={active_style}><Icon name="plane" size="large" color="grey" /></CustomLink>
+					<CustomLink to="/" title="Test Runs" activeStyle={active_style}><Icon name="plane" size="large" color="grey" /></CustomLink>
 				</ListItem>
 				<ListItem>
 					<CustomLink to="/specs" title="Specs" activeStyle={active_style}><Icon name="folder open" size="large" color="grey" /></CustomLink>

@@ -8,6 +8,8 @@ import { useQuery } from 'react-apollo-hooks';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
 
+const default_page_size = 15;
+
 const GET_SPECS = gql`
 	query GetSpecs($page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
 		testSpecsUnique(page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
@@ -34,7 +36,6 @@ const RightCell = styled.span`
 `;
 
 function SpecTable() {
-	const default_page_size = 15;
 	const [ table_state, setTableState ] = useState({
 		page     : 0,
 		sorted   : [{ id : `spec_id`, desc : true }],
@@ -76,13 +77,11 @@ function SpecTable() {
 			accessor : `retries`,
 			Cell     : (props) => <RightCell>{props.value}</RightCell>
 		},
-		/*
 		{
 			Header   : `Query Pct Change`,
 			accessor : `query_percent_change`,
 			Cell     : (props) => <RightCell>{props.value}</RightCell>
 		},
-		*/
 		{
 			Header     : ``,
 			accessor   : `spec_id`,
@@ -121,6 +120,7 @@ function SpecTable() {
 					loading={loading}
 					columns={columns}
 					data={[]}
+					defaultPageSize={default_page_size}
 					className="-striped"
 					showPageSizeOptions={false}
 				/>

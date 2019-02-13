@@ -69,7 +69,7 @@ function RunTable() {
 
 	const columns = [
 		{
-			Header   : () => (
+			Header : () => (
 				<>
 					<LeftHeaderCell>Runs</LeftHeaderCell>
 					<RightHeaderCell><Checkbox label="Exclude setup" checked={exclude_setup} onChange={() => setExcludeSetup(!exclude_setup)} /></RightHeaderCell>

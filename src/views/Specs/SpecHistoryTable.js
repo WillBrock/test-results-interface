@@ -50,6 +50,7 @@ function SpecHistoryTable({ spec }) {
 
 	const { data, loading } = useQuery(GET_SPECS, {
 		variables : {
+			spec_id   : spec.spec_id,
 			page_size : default_page_size,
 			page      : table_state.page,
 			sorted    : table_state.sorted,
@@ -110,6 +111,8 @@ function SpecHistoryTable({ spec }) {
 			filtered : state.filtered,
 		});
 	}
+
+	console.log(data);
 
 	return (
 		<>
