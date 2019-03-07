@@ -15,7 +15,7 @@ function SpecSegment({ spec }) {
 					{spec.spec_id}
 				</div>
 				<div>
-					{spec.suite_title}
+					{spec.suite_title.replace(/FOCUS-\d.*-/, ``)}
 				</div>
 			</CustomFlexBox>
 		</Segment>

@@ -39,7 +39,7 @@ const GET_RUNS = gql`
 				run_key,
 				issue_key,
 				passed,
-				length,
+				duration,
 				start,
 				version,
 				suites
@@ -71,7 +71,7 @@ function RunTable() {
 		{
 			Header : () => (
 				<>
-					<LeftHeaderCell>Runs</LeftHeaderCell>
+					<LeftHeaderCell>Branch Runs</LeftHeaderCell>
 					<RightHeaderCell><Checkbox label="Exclude setup" checked={exclude_setup} onChange={() => setExcludeSetup(!exclude_setup)} /></RightHeaderCell>
 				</>
 			),
@@ -85,20 +85,19 @@ function RunTable() {
 			Cell     : props => moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)
 		},
 		{
-			Header   : `Issue Key`,
+			Header   : `Jira #`,
 			accessor : `issue_key`,
 		},
 		{
-			Header   : `Suites`,
+			Header   : `Suites Ran`,
 			accessor : `suites`,
 			minWidth : 250,
 			Cell     : props => props.value.replace(/,/g, `, `),
 		},
 		{
 			Header   : `Duration`,
-			accessor : `length`,
-			sortable : false,
-			Cell     : props => <RightCell>{props.value ? formatDuration(props.value) : `In progress`}</RightCell>
+			accessor : `duration`,
+			Cell     : props => <RightCell>{props.value ? formatDuration(props.value * .001) : `In progress`}</RightCell>
 		},
 		{
 			Header   : `Version`,

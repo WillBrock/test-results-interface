@@ -30,7 +30,7 @@ const GET_RUNS = gql`
 `;
 
 function Tests() {
-	const [ pages, setPages ]            = useState(15);
+	const [ pages ] = useState(15);
 	const [ table_state, setTableState ] = useState({
 		pageSize : 10,
 		page     : 0,

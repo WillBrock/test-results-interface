@@ -61,13 +61,9 @@ function SpecHistoryTable({ spec }) {
 
 	const columns = [
 		{
-			Header   : `Date`,
+			Header   : `Run Date`,
 			accessor : `run_date`,
 			Cell     : props => moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)
-		},
-		{
-			Header  : `Run`,
-			accessor : `run_key`,
 		},
 		{
 			Header  : `Issue Key`,
@@ -111,8 +107,6 @@ function SpecHistoryTable({ spec }) {
 			filtered : state.filtered,
 		});
 	}
-
-	console.log(data);
 
 	return (
 		<>

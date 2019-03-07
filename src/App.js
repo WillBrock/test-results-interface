@@ -16,7 +16,7 @@ const FlexContainer = styled.div`
 
 function App() {
 	return (
-		<Router>
+		<Router basename="/test-results-interface/">
 			<div>
 				<Header />
 				<FlexContainer>

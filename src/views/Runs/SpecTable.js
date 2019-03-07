@@ -19,7 +19,7 @@ const RightCell = styled.span`
 	text-align : right;
 `;
 
-const default_page_size = 15;
+const default_page_size = 13;
 
 const GET_SPECS = gql`
 	query GetSpecsFromRun($test_run_id: Int, $page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
@@ -46,13 +46,14 @@ const GET_SPECS = gql`
 function SpecTable({ match, run }) {
 	const columns = [
 		{
-			Header   : `Spec`,
+			Header   : `Test Case #`,
 			accessor : `spec_id`,
 		},
 		{
 			Header   : `Title`,
 			accessor : `suite_title`,
 			minWidth : 400,
+			Cell     : props => props.value.replace(/FOCUS-\d.*- /, ``),
 		},
 		{
 			Header   : `Duration`,

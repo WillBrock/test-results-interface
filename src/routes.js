@@ -11,7 +11,7 @@ function Routes() {
 	return (
 		<PageContainer>
 			<Route exact path="/" component={Runs} />
-			<Route path="/runs/:run_id" component={Run}/>
+			<Route exact path="/runs/:run_id" component={Run}/>
 			<Route exact path="/tests" component={Tests}/>
 			<Route exact path="/specs" component={Specs}/>
 			<Route exact path="/specs/:spec_id" component={Spec}/>

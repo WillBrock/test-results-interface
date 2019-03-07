@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
 
 const HeaderContainer = styled.div`
 	position : fixed;
@@ -21,11 +22,24 @@ const Title = styled.div`
 	font-size : 16px;
 `;
 
+const CustomNav = styled(NavLink)`
+	color : #fff;
+	text-decoration : none;
+
+	:visited {
+		text-decoration : none;
+	}
+
+	:hover {
+		color : #fff;
+	}
+`;
+
 function Header() {
 	return (
 		<HeaderContainer>
 			<Title>
-				Test Results Reporter
+				<CustomNav to="/">Test Results Reporter</CustomNav>
 			</Title>
 		</HeaderContainer>
 	);

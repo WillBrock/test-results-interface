@@ -5,6 +5,7 @@ import ReactTable from 'react-table';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import { useQuery } from 'react-apollo-hooks';
+import formatDuration from '../../helpers/duration';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
 
@@ -20,6 +21,8 @@ const GET_SPECS = gql`
 				passes,
 				fails,
 				retries,
+				query_percent_change,
+				average_duration,
 			}
 		}
 	}
@@ -54,13 +57,14 @@ function SpecTable() {
 
 	const columns = [
 		{
-			Header   : `Spec`,
+			Header   : `Test Case #`,
 			accessor : `spec_id`,
 		},
 		{
 			Header   : `Title`,
 			accessor : `suite_title`,
 			minWidth : 250,
+			Cell     : props => props.value.replace(/FOCUS-\d.*- /, ``),
 		},
 		{
 			Header   : `Passes`,
@@ -78,9 +82,16 @@ function SpecTable() {
 			Cell     : (props) => <RightCell>{props.value}</RightCell>
 		},
 		{
-			Header   : `Query Pct Change`,
-			accessor : `query_percent_change`,
-			Cell     : (props) => <RightCell>{props.value}</RightCell>
+			Header   : `Avg Duration`,
+			accessor : `average_duration`,
+			Cell     : props => <RightCell>{props.value ? formatDuration(Number(props.value) * .001) : ``}</RightCell>
+		},
+		{
+			Header     : `Query Pct Change`,
+			accessor   : `query_percent_change`,
+			filterable : false,
+			sortable   : false,
+			Cell       : (props) => <RightCell>{props.value}</RightCell>
 		},
 		{
 			Header     : ``,
