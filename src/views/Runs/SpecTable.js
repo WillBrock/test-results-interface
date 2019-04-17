@@ -53,7 +53,7 @@ function SpecTable({ match, run }) {
 			Header   : `Title`,
 			accessor : `suite_title`,
 			minWidth : 400,
-			Cell     : props => props.value.replace(/FOCUS-\d.*- /, ``),
+			Cell     : props => props.value ? props.value.replace(/FOCUS-\d.*- /, ``) : ``,
 		},
 		{
 			Header   : `Duration`,

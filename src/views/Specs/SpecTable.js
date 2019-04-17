@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import ReactTable from 'react-table';
@@ -12,8 +12,8 @@ import '../../styles/react-table.scss';
 const default_page_size = 15;
 
 const GET_SPECS = gql`
-	query GetSpecs($page_size: Int, $page: Int, $sorted: [Sorted], $filtered: [Filtered]) {
-		testSpecsUnique(page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
+	query GetSpecs {
+		testSpecsUnique {
 			count,
 			data {
 				spec_id,
@@ -39,19 +39,7 @@ const RightCell = styled.span`
 `;
 
 function SpecTable() {
-	const [ table_state, setTableState ] = useState({
-		page     : 0,
-		sorted   : [{ id : `spec_id`, desc : true }],
-		filtered : [],
-	});
-
 	const { data, loading } = useQuery(GET_SPECS, {
-		variables : {
-			page_size : default_page_size,
-			page      : table_state.page,
-			sorted    : table_state.sorted,
-			filtered  : table_state.filtered,
-		},
 		suspend : false,
 	});
 
@@ -64,7 +52,7 @@ function SpecTable() {
 			Header   : `Title`,
 			accessor : `suite_title`,
 			minWidth : 250,
-			Cell     : props => props.value.replace(/FOCUS-\d.*- /, ``),
+			Cell     : props => props.value ? props.value.replace(/FOCUS-\d.*- /, ``) : ``,
 		},
 		{
 			Header   : `Passes`,
@@ -90,7 +78,6 @@ function SpecTable() {
 			Header     : `Query Pct Change`,
 			accessor   : `query_percent_change`,
 			filterable : false,
-			sortable   : false,
 			Cell       : (props) => <RightCell>{props.value}</RightCell>
 		},
 		{
@@ -102,31 +89,23 @@ function SpecTable() {
 		},
 	];
 
-	function onFetchData(state) {
-		setTableState({
-			page     : state.page,
-			sorted   : state.sorted,
-			filtered : state.filtered,
-		});
-	}
-
 	return (
 		<>
 			{!loading ? (
 				<ReactTable
-					manual
+					//manual
 					filterable
 					columns={columns}
 					data={data.testSpecsUnique.data}
 					pages={Math.ceil(data.testSpecsUnique.count / default_page_size)}
-					onFetchData={onFetchData}
+					//onFetchData={onFetchData}
 					defaultPageSize={default_page_size}
 					className="-striped"
 					showPageSizeOptions={false}
 				/>
 			) : (
 				<ReactTable
-					manual
+					//manual
 					filterable
 					loading={loading}
 					columns={columns}

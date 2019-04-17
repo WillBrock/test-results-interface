@@ -31,7 +31,7 @@ const GET_SPECS = gql`
 				failed,
 				retries,
 				duration,
-				run_date,
+				start,
 				issue_key,
 				error_message,
 				queries,
@@ -62,11 +62,11 @@ function SpecHistoryTable({ spec }) {
 	const columns = [
 		{
 			Header   : `Run Date`,
-			accessor : `run_date`,
+			accessor : `start`,
 			Cell     : props => moment(props.value).format(`MM/DD/YYYY HH:mm:ss`)
 		},
 		{
-			Header  : `Issue Key`,
+			Header   : `Issue Key`,
 			accessor : `issue_key`,
 		},
 		{

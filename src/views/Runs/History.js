@@ -7,7 +7,7 @@ function History({ specs, getIcon }) {
 	const TableRows = specs.map(spec => (
 		<Table.Row key={spec.id}>
 			<Table.Cell>{getIcon({ passed : spec.passed, failed : spec.failed })}</Table.Cell>
-			<Table.Cell>{moment(spec.run_date).format(`MM/DD/YYYY HH:mm:ss`)}</Table.Cell>
+			<Table.Cell>{moment(spec.start).format(`MM/DD/YYYY HH:mm:ss`)}</Table.Cell>
 			<Table.Cell>{spec.duration ? formatDuration(Number(spec.duration) * .001) : ``}</Table.Cell>
 			<Table.Cell>{spec.retries}</Table.Cell>
 			<Table.Cell>{spec.queries}</Table.Cell>

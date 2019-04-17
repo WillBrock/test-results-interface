@@ -34,7 +34,7 @@ const GET_SPEC_DATA = gql`
 				duration,
 				queries,
 				retries,
-				run_date,
+				start,
 				error_message,
 				stacktrace,
 			}
