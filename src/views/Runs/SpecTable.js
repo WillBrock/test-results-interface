@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import { Icon, Button, Popup, Message } from 'semantic-ui-react';
+import { Icon, Button, Popup } from 'semantic-ui-react';
 import SpecDetails from './SpecDetails';
 import formatDuration from '../../helpers/duration';
 import styled from 'styled-components';
+import Error from '../../components/ErrorPopup';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
 
@@ -29,15 +30,19 @@ const GET_SPECS = gql`
 				id,
 				test_run_id,
 				spec_id,
+				user,
 				suite_title,
 				retries,
 				passed,
 				failed,
 				skipped,
 				duration,
-				error_message,
-				stacktrace,
 				queries,
+				errors {
+					id,
+					error_message,
+					stacktrace
+				}
 			}
 		}
 	}
@@ -77,14 +82,13 @@ function SpecTable({ match, run }) {
 				const {
 					passed,
 					failed,
-					error_message,
-					stacktrace
+					errors,
 				} = props.original;
 
 				const icon = getIcon({ passed, failed });
 
 				if(failed) {
-					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<><Message negative>{error_message}</Message><Message negative>{stacktrace}</Message></>} />
+					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<Error errors={errors} />} />
 				}
 
 				return <CenterCell>{icon}</CenterCell>

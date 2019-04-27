@@ -12,6 +12,9 @@ function RunSegment({ run }) {
 		<Segment>
 			<CustomFlexBox>
 				<div>
+					{run.user || `Invalid User`}
+				</div>
+				<div>
 					{run.run_key}
 				</div>
 				<div>

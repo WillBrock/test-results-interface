@@ -38,6 +38,7 @@ const GET_RUNS = gql`
 				id,
 				run_key,
 				issue_key,
+				user,
 				passed,
 				duration,
 				start,
@@ -89,10 +90,14 @@ function RunTable() {
 			accessor : `issue_key`,
 		},
 		{
+			Header   : `User`,
+			accessor : `user`,
+		},
+		{
 			Header   : `Suites Ran`,
 			accessor : `suites`,
 			minWidth : 250,
-			Cell     : props => props.value.replace(/,/g, `, `),
+			Cell     : props => props.value ? props.value.replace(/,/g, `, `) : ``,
 		},
 		{
 			Header   : `Duration`,

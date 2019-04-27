@@ -35,8 +35,11 @@ const GET_SPEC_DATA = gql`
 				queries,
 				retries,
 				start,
-				error_message,
-				stacktrace,
+				errors {
+					id,
+					error_message,
+					stacktrace,
+				}
 			}
 		}
 	}
@@ -64,10 +67,6 @@ function SpecDetails({ open, handleClose, spec, getIcon }) {
 		{
 			menuItem : `Logs`,
 			render   : () => <Tab.Pane attached={false}>Logs</Tab.Pane>
-		},
-		{
-			menuItem : `Screenshots`,
-			render   : () => <Tab.Pane attached={false}>Screenshots</Tab.Pane>
 		},
 		{
 			menuItem : `History`,

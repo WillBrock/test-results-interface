@@ -11,6 +11,7 @@ const GET_RUN = gql`
 				id,
 				run_key,
 				issue_key,
+				user,
 				suites,
 			}
 		}

@@ -3,10 +3,12 @@ import moment from 'moment';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import { useQuery } from 'react-apollo-hooks';
-import { Popup, Message } from 'semantic-ui-react';
+import { Popup, Button } from 'semantic-ui-react';
 import formatDuration from '../../helpers/duration';
 import styled from 'styled-components';
 import PassFailIcon from '../../components/PassFailIcon';
+import Error from '../../components/ErrorPopup';
+import SpecErrors from './SpecErrors';
 import 'react-table/react-table.css';
 import '../../styles/react-table.scss';
 
@@ -25,6 +27,7 @@ const GET_SPECS = gql`
 		specResults(spec_id: $spec_id, page_size: $page_size, page: $page, sorted: $sorted, filtered: $filtered) {
 			count,
 			data {
+				id,
 				spec_id,
 				suite_title,
 				passed,
@@ -33,16 +36,23 @@ const GET_SPECS = gql`
 				duration,
 				start,
 				issue_key,
-				error_message,
 				queries,
+				errors {
+					id,
+					error_message,
+					stacktrace,
+				}
 			}
 		}
 	}
 `;
 
 function SpecHistoryTable({ spec }) {
-	const default_page_size = 15;
-	const [ table_state, setTableState ] = useState({
+	const default_page_size   = 15;
+
+	const [ showModal, setShowModal ]      = useState(false);
+	const [ current_spec, setCurrentSpec ] = useState({});
+	const [ table_state, setTableState ]   = useState({
 		page     : 0,
 		sorted   : [{ id : `id`, desc : true }],
 		filtered : [],
@@ -70,6 +80,10 @@ function SpecHistoryTable({ spec }) {
 			accessor : `issue_key`,
 		},
 		{
+			Header   : `User`,
+			accessor : `user`,
+		},
+		{
 			Header   : `Duration`,
 			accessor : `duration`,
 			Cell     : props => <RightCell>{props.value ? formatDuration(Number(props.value) * .001) : ``}</RightCell>
@@ -88,14 +102,29 @@ function SpecHistoryTable({ spec }) {
 			Header   : `Result`,
 			accessor : `status`,
 			Cell     : props => {
-				const { passed, failed, error_message } = props.original;
+				const { passed, failed, errors } = props.original;
 				const icon = PassFailIcon({ passed, failed })
 
 				if(failed) {
-					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<Message negative>{error_message}</Message>} />
+					return <Popup trigger={<CenterCell>{icon}</CenterCell>} content={<Error errors={errors} />} />
 				}
 
 				return <CenterCell>{icon}</CenterCell>
+			}
+		},
+		{
+			Header     : ``,
+			accessor   : `id`,
+			filterable : false,
+			sortable   : false,
+			Cell       : props => {
+				const { errors } = props.original;
+
+				if(!errors.length) {
+					return <CenterCell></CenterCell>;
+				}
+
+				return <CenterCell><Button onClick={() => handleErrorClick(props.value)} primary size="small">Errors</Button></CenterCell>
 			}
 		},
 	];
@@ -108,8 +137,25 @@ function SpecHistoryTable({ spec }) {
 		});
 	}
 
+	function handleErrorClick(result_id) {
+		setShowModal(true);
+
+		const spec = data.specResults.data.find(result => result.id === result_id);
+		setCurrentSpec(spec);
+	}
+
+	function handleClose() {
+		setShowModal(false);
+	}
+
 	return (
 		<>
+			<SpecErrors
+				open={showModal}
+				handleClose={handleClose}
+				spec={current_spec}
+			/>
+
 			{!loading ? (
 				<ReactTable
 					manual
@@ -117,7 +163,7 @@ function SpecHistoryTable({ spec }) {
 					loading={loading}
 					columns={columns}
 					data={data.specResults.data}
-					pages={Math.ceil(data.specResults.count / default_page_size)}
+					pages="10000"
 					onFetchData={onFetchData}
 					defaultPageSize={default_page_size}
 					className="-striped"

@@ -70,6 +70,11 @@ function SpecTable() {
 			Cell     : (props) => <RightCell>{props.value}</RightCell>
 		},
 		{
+			Header   : `Pct Failed`,
+			accessor : `percent_failed`,
+			Cell     : (props) => <RightCell>{props.value}</RightCell>
+		},
+		{
 			Header   : `Avg Duration`,
 			accessor : `average_duration`,
 			Cell     : props => <RightCell>{props.value ? formatDuration(Number(props.value) * .001) : ``}</RightCell>
@@ -98,7 +103,6 @@ function SpecTable() {
 					columns={columns}
 					data={data.testSpecsUnique.data}
 					pages={Math.ceil(data.testSpecsUnique.count / default_page_size)}
-					//onFetchData={onFetchData}
 					defaultPageSize={default_page_size}
 					className="-striped"
 					showPageSizeOptions={false}

@@ -12,8 +12,12 @@ function History({ specs, getIcon }) {
 			<Table.Cell>{spec.retries}</Table.Cell>
 			<Table.Cell>{spec.queries}</Table.Cell>
 			<Table.Cell>
-				{spec.failed ? (
-					<Popup basic trigger={<Icon name="info circle" color="red"></Icon>} content={<><Message negative>{spec.error_message}</Message><Message negative>{spec.stacktrace}</Message></>} />
+				{spec.failed && spec.errors ? (
+					<Popup
+						basic
+						trigger={<Icon name="info circle" color="red"></Icon>}
+						content={<><Message negative>{spec.errors[spec.errors.length - 1].error_message}</Message><Message negative>{spec.errors[spec.errors.length - 1].stacktrace}</Message></>}
+					/>
 				) : (
 					``
 				)}
