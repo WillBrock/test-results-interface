@@ -12,7 +12,7 @@ yarn dev
 
 ```
 
-Copy the ```src/config.sample.js``` to ```src/config.js`` and update the graphql endpoint
+Copy the ```src/config.sample.js``` to ```src/config.js``` and update the graphql endpoint
 
 ## Production build
 
