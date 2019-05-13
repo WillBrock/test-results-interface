@@ -1,6 +1,6 @@
 # Test Results Interface
 
-Interface to display historical and current automated test results from a GraphQL server
+React interface to display historical and current automated test results from a GraphQL server
 
 ## Setup
 
